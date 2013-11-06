@@ -1,9 +1,13 @@
+#ifndef MESSAGEFORMAT_H
+#define MESSAGEFORMAT_H
+
 #pragma once
-class MessageBox
+class MessageFormat
 {
 public:
-	MessageBox(void);
-	~MessageBox(void);
+	MessageFormat(void);
+	~MessageFormat(void);
+
 	struct AlgoMsg{
 		int TYPE;
 		int ORIGIN;
@@ -12,3 +16,4 @@ public:
 	}
 };
 
+#endif
