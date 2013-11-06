@@ -2,18 +2,14 @@
 #define MESSAGEFORMAT_H
 
 #pragma once
-class MessageFormat
-{
-public:
-	MessageFormat(void);
-	~MessageFormat(void);
+
 
 	struct AlgoMsg{
-		int TYPE;
+		int TYPE; // 0: request_token, 1: have-token, 2: release, 3:send-token
 		int ORIGIN;
 		long SEQ;
 		int sender;
 	}
-};
+
 
 #endif
