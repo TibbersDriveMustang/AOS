@@ -1,11 +1,11 @@
 #include "MessageFormat.h"
 
 
-MessageFormat::MessageFormat(void)
+MessageBox::MessageBox(void)
 {
 }
 
 
-MessageFormat::~MessageFormat(void)
+MessageBox::~MessageBox(void)
 {
 }

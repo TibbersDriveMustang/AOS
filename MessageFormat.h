@@ -1,9 +1,9 @@
 #pragma once
-class MessageFormat
+class MessageBox
 {
 public:
-	MessageFormat(void);
-	~MessageFormat(void);
+	MessageBox(void);
+	~MessageBox(void);
 	struct AlgoMsg{
 		int TYPE;
 		int ORIGIN;
