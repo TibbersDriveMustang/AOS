@@ -1,0 +1,29 @@
+Compile server.cpp
+Command: g++ ./server.cpp
+Run server on net02
+Command: ./server 1235
+
+Compile communication.cpp
+Command: g++ ./communication.cpp
+Run on any server
+Command: ./communication
+
+Maekawa Data Structure
+Array[] quorum members
+waitingQueue[]
+seqNumber
+timeStamp
+
+enterCriticalSection(node n)
+	
+receiveMessage()
+sendMessage()
+
+requ - request()
+lock - locked()
+rele - released()
+reli - relinquished()
+fail - failed()
+inqu - inquired()
+
+checkLockedStatus() - return boolean
