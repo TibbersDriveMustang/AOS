@@ -2,8 +2,8 @@
 #define LEXIQUEUE_H_
 
 #pragma once
-#include"MessageFormat.h"
-#include<cstdlib>
+#include "MessageFormat.h"
+#include <cstdlib>
 #include <queue>
 
 using namespace std;
@@ -26,7 +26,12 @@ public:
 	AlgoMsg top();
 	AlgoMsg remove(int origin, long seq);
 	bool add(AlgoMsg in);
-	bool update();
+
+	bool update(int **quorum,int qsize,int ID);
 };
 
+class BlockingQueue{
+
+
+};
 #endif

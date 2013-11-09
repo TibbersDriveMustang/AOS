@@ -8,6 +8,7 @@ void Torum::init()
 	HOLDER = -1;
 	queue = new LexiQueue();
 	pthread_mutex_init(&sharedQLock,NULL);
+	//sleep(100);
 }
 
 Torum* Torum::getInstance()
@@ -89,7 +90,7 @@ bool Torum::receiveToken(AlgoMsg token){
 bool Torum::receiveRelease(AlgoMsg release){
 	if(sequenceNo<release.SEQ) sequenceNo = release.SEQ;
 	HOLDER = -1;
-	queue->update();
+	queue->update(quorum,quorumsize,ID);
 	return true;
 }
 
@@ -114,7 +115,7 @@ bool Torum::sendToken(){
 			//send(release,quorum[ID][i]);
 		i++;
 		}
-	queue->update();
+	queue->update(quorum,quorumsize,ID);
 	
 	struct AlgoMsg token;
 		token.TYPE = SEND_TOKEN;
