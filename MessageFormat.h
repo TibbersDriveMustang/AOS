@@ -3,13 +3,16 @@
 
 #pragma once
 
+#define REQUEST 0
+#define HAVE_TOKEN 1
+#define RELEASE 2
+#define SEND_TOKEN 3
 
-	typedef struct AlgoMsg{
+	struct AlgoMsg{
 		int TYPE; // 0: request_token, 1: have-token, 2: release, 3:send-token
 		int ORIGIN;
 		long SEQ;
 		int sender;
-	}messagetype;
-
+	};
 
 #endif
