@@ -6,33 +6,30 @@
 #include "wqueue.h"
 #include "communication.h"
 
-void *function(void* queue)
-{
+void *function(void* queue) {
 	communication com;
-	com.serverListen(1235,(void *)&queue);
+	com.serverListen(1235,(void *)&queue));
 	return NULL;
 }
 
-void *fun(void* queue)
-{
+void *fun(void* queue) {
 	wqueue<Packet*>*m_queue=(wqueue<Packet*>*)queue;
 
 	// Remove 1 item at a time and process it. Blocks if no items are 
-			// available to process.
-			for (int i = 0;; i++) {
-				printf("thread , loop %d - waiting for item...\n",i);
-				Packet* item = m_queue->remove();
-				printf("thread  loop %d - got one item\n", i);
-				printf("thread loop %d - item: messageType - %d, SEQ number - %ld\n", i, item->TYPE, item->SEQ);
-				if(item->TYPE == 999)
-				{
-					//Recieve Quorum table and NodeID
-				}
-				
-				
-				delete item;
-			}
-			return NULL;
+	// available to process.
+	for (int i = 0;; i++) {
+		printf("thread , loop %d - waiting for item...\n", i);
+		Packet* item = m_queue->remove();
+		printf("thread  loop %d - got one item\n", i);
+		printf("thread loop %d - item: messageType - %d, SEQ number - %ld\n",
+				i, item->TYPE, item->SEQ);
+		if (item->TYPE == 999) {
+			//Recieve Quorum table and NodeID
+		}
+
+		delete item;
+	}
+	return NULL;
 }
 int main() {
 
@@ -56,10 +53,10 @@ int main() {
 	queue.add(message1);
 	queue.add(message2);
 	/*ConsumerThread* thread1 = new ConsumerThread(queue);
-	thread1->start();*/
+	 thread1->start();*/
 	pthread_t thread1;
-	pthread_create(&thread1, NULL, fun,(void *)&queue);
-	
+	pthread_create(&thread1, NULL, fun, (void *)&queue);
+
 	Packet *message3;
 	message3 = (struct Packet *)malloc(sizeof(struct Packet));
 	message3->TYPE=3;
@@ -67,17 +64,16 @@ int main() {
 	message3->SEQ=34332;
 	message3->sender=5;
 	queue.add(message3);
+
+	pthread_t thread2;
+
+	/* thread1 = (pthread_t*)malloc(sizeof(pthread_t));*/
+	pthread_create(&thread2, NULL, function, (void *)&queue);
+
 	while (queue.size() < 0)
 		;
-	pthread_join(thread1,NULL);
-	
-	pthread_t thread2;
-		
-		/* thread1 = (pthread_t*)malloc(sizeof(pthread_t));*/
-		 pthread_create(&thread2, NULL, function, (void *)&queue);
-		 pthread_join(thread2,NULL);
-		 
-		 
+	pthread_join(thread1, NULL);
+	pthread_join(thread2, NULL);
 	printf("done\n");
 	exit(0);
 
