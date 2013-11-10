@@ -7,7 +7,6 @@
 #include <netdb.h>
 #include<string>
 #include<errno.h>
-#include "MessageFormat.h"
 #include <stdio.h>      /* for printf() and fprintf() */
 #include <sys/socket.h> /* for socket(), bind(), and connect() */
 #include <arpa/inet.h>  /* for sockaddr_in and inet_ntoa() */
@@ -15,6 +14,7 @@
 #include <string.h>     /* for memset() */
 #include <unistd.h>     /* for close() */
 #include "wqueue.h"
+#include "MessageFormat.h"
 
 #define MAXPENDING 5    /* Maximum outstanding connection requests */
 #define RCVBUFSIZE 32   /* Size of receive buffer */
@@ -24,12 +24,16 @@ using namespace std;
 
 class communication {
 public:
-	char dest_IP_Address[13];
+	//char dest_IP_Address[13];
 	string source_IP_Address;
-	int dest_port;
+	//int dest_port;
 
-	int sendMessage(struct Packet message);
-	int serverListen(int portNum,void* queue);
+	int connectToServer(char dest_IP_Address[13],int dest_port);
+	int writeToSocket(int sockfd, void *buffer, int size);
+	int readFromSocket(int sockfd, void *buffer, int size);
+	int closeSocket(int sockfd);
+	int sendMessage(Packet message,char dest_IP_Address[13],int dest_port);
+	int serverListen(int portNum,wqueue<Packet*>& queue);
 
 };
 

@@ -20,7 +20,7 @@ private:
 public:
 	Starter();
 	virtual ~Starter();
-	void registerAtController();
+	void registerAtController(char controllerIP[],int port);
 	void startListener(Torum *node);
 };
 

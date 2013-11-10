@@ -10,7 +10,9 @@
 Starter::Starter() {
 	node = Torum::getInstance();
 	node->init();
-	registerAtController();
+	char controllerIP[] = "10.176.67.65";
+	int port = 1235;
+	registerAtController(controllerIP, port);
 	startListener(node);
 }
 
@@ -21,13 +23,13 @@ Starter::~Starter() {
 /*
  * send a message to controller when a node starts on a amachine.
  */
-void Starter::registerAtController(){
+void Starter::registerAtController(char controllerIP[],int port){
 	//communication
 	Packet msg;
 	msg.TYPE=0;
 	communication com;
-	strcpy(com.dest_IP_Address,"10.176.67.65");
-	com.dest_port=1235;
+	//strcpy(com.dest_IP_Address,controllerIP);
+	//com.dest_port=port;
 	com.sendMessage(msg);
 	
 	//implement the reciever in reciever thread if msg type=0 listen to get the quorum table and nodeid
