@@ -9,7 +9,7 @@
 #define RCVBUFSIZE 32   /* Size of receive buffer */
 
 
-struct mtype{
+struct Packet{
 	int TYPE; // 0: request_token, 1: have-token, 2: release, 3:send-token
 	int ORIGIN;
 	long SEQ;
@@ -30,7 +30,7 @@ void HandleTCPClient(int clntSocket)
 {
     char echoBuffer[RCVBUFSIZE] = {'\0'};        /* Buffer for echo string */
     int recvMsgSize;                    /* Size of received message */
-    mtype message;
+    Packet message;
     printf("Entered handling client");
     
     /* Receive message from client */
@@ -62,57 +62,58 @@ printf("Message sender %ld", message.sender);
 
     close(clntSocket);    /* Close client socket */
 }
-int main(int argc, char *argv[])
+/*int main(int argc, char *argv[])
 {
-    int servSock;                    /* Socket descriptor for server */
-    int clntSock;                    /* Socket descriptor for client */
-    struct sockaddr_in echoServAddr; /* Local address */
-    struct sockaddr_in echoClntAddr; /* Client address */
-    unsigned short echoServPort;     /* Server port */
-    unsigned int clntLen;            /* Length of client address data structure */
+    int servSock;                     Socket descriptor for server 
+    int clntSock;                     Socket descriptor for client 
+    struct sockaddr_in echoServAddr;  Local address 
+    struct sockaddr_in echoClntAddr;  Client address 
+    unsigned short echoServPort;      Server port 
+    unsigned int clntLen;             Length of client address data structure 
 
-    if (argc != 2)     /* Test for correct number of arguments */
+    if (argc != 2)      Test for correct number of arguments 
     {
         fprintf(stderr, "Usage:  %s <Server Port>\n", argv[0]);
         exit(1);
     }
 
-    echoServPort = atoi(argv[1]);  /* First arg:  local port */
+    echoServPort = atoi(argv[1]);   First arg:  local port 
 
-    /* Create socket for incoming connections */
+     Create socket for incoming connections 
     if ((servSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
         DieWithError("socket() failed");
 
-    /* Construct local address structure */
-    memset(&echoServAddr, 0, sizeof(echoServAddr));   /* Zero out structure */
-    echoServAddr.sin_family = AF_INET;                /* Internet address family */
-    echoServAddr.sin_addr.s_addr = htonl(INADDR_ANY); /* Any incoming interface */
-    echoServAddr.sin_port = htons(echoServPort);      /* Local port */
+     Construct local address structure 
+    memset(&echoServAddr, 0, sizeof(echoServAddr));    Zero out structure 
+    echoServAddr.sin_family = AF_INET;                 Internet address family 
+    echoServAddr.sin_addr.s_addr = htonl(INADDR_ANY);  Any incoming interface 
+    echoServAddr.sin_port = htons(echoServPort);       Local port 
 
-    /* Bind to the local address */
+     Bind to the local address 
     if (bind(servSock, (struct sockaddr *) &echoServAddr, sizeof(echoServAddr)) < 0)
         DieWithError("bind() failed");
 
-    /* Mark the socket so it will listen for incoming connections */
+     Mark the socket so it will listen for incoming connections 
     if (listen(servSock, MAXPENDING) < 0)
         DieWithError("listen() failed");
     int del=0;
-    for (;del<1;) /* Run forever */
+    for (;del<1;)  Run forever 
     {
-        /* Set the size of the in-out parameter */
+         Set the size of the in-out parameter 
         clntLen = sizeof(echoClntAddr);
 
-        /* Wait for a client to connect */
+         Wait for a client to connect 
         if ((clntSock = accept(servSock, (struct sockaddr *) &echoClntAddr,
                                &clntLen)) < 0)
             DieWithError("accept() failed");
 
-        /* clntSock is connected to a client! */
+         clntSock is connected to a client! 
 
         printf("Handling client %s\n", inet_ntoa(echoClntAddr.sin_addr));
 
         HandleTCPClient(clntSock);
         del++;
     }
-    /* NOT REACHED */
+     NOT REACHED 
 }
+*/

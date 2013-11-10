@@ -6,7 +6,7 @@
  */
 
 #include "Starter.h"
-
+#include "communication.h"
 Starter::Starter() {
 	node = Torum::getInstance();
 	node->init();
@@ -23,6 +23,15 @@ Starter::~Starter() {
  */
 void Starter::registerAtController(){
 	//communication
+	Packet msg;
+	msg.TYPE=0;
+	communication com;
+	strcpy(com.dest_IP_Address,"10.176.67.65");
+	com.dest_port=1235;
+	com.sendMessage(msg);
+	
+	//implement the reciever in reciever thread if msg type=0 listen to get the quorum table and nodeid
+	
 	//send a status message
 	int id;//receive a node id
 	node->setID(id);

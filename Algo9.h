@@ -29,10 +29,10 @@ public:
 	bool setID(int id);
 	bool getQuorumTable(int **quorumtable,int qsize,int nnodes);
 	bool requestCS();
-	bool receiveRequest(AlgoMsg request);
-	bool receiveToken(AlgoMsg request);
-	bool receiveRelease(AlgoMsg request);
-	bool receiveHaveTkn(AlgoMsg request);
+	bool receiveRequest(Packet request);
+	bool receiveToken(Packet request);
+	bool receiveRelease(Packet request);
+	bool receiveHaveTkn(Packet request);
 	bool sendToken();
 
 private:

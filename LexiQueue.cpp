@@ -33,16 +33,16 @@ AlgoMsg LexiQueue::top(){
 	return top;
 }
 
-bool LexiQueue::add(AlgoMsg in){
+bool LexiQueue::add(Packet in){
 	pq.push(in);
 	return true;
 }
 
 bool LexiQueue::update(int **quorum,int qsize,int ID){
-	priority_queue<AlgoMsg, vector<AlgoMsg>, CompareMessages> tempq;
+	priority_queue<Packet, vector<Packet>, CompareMessages> tempq;
 
 	while(!pq.empty()){
-		AlgoMsg top = pq.top();
+		Packet top = pq.top();
 		pq.pop();
 		for(int j=0;j<qsize;j++){
 			if(quorum[top.ORIGIN][j] == ID){

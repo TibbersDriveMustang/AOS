@@ -19,13 +19,13 @@ public:
 class LexiQueue
 {
 protected:
-	priority_queue<AlgoMsg, vector<AlgoMsg>, CompareMessages> pq;
+	priority_queue<Packet, vector<Packet>, CompareMessages> pq;
 public:
 	LexiQueue(void);
 	~LexiQueue(void);
-	AlgoMsg top();
-	AlgoMsg remove(int origin, long seq);
-	bool add(AlgoMsg in);
+	Packet top();
+	Packet remove(int origin, long seq);
+	bool add(Packet in);
 
 	bool update(int **quorum,int qsize,int ID);
 };
