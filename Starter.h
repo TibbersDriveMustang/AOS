@@ -17,11 +17,17 @@ using namespace std;
 class Starter {
 private:
 	Torum *node;
+	int quorumSize;
+	int NumNodes;
+	int **Quorum;
+	int id;
 public:
 	Starter();
 	virtual ~Starter();
 	void registerAtController(char controllerIP[],int port);
-	void startListener(Torum *node);
+	void decideAlgorithm();
+	void Starter::Algorithm1();
+	void Starter::Algorithm2();
 };
 
 #endif /* STARTER_H_ */

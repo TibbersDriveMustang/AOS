@@ -30,7 +30,7 @@
 	return 0;
 }*/
 
-int communication::connectToServer(char dest_IP_Address[13],int dest_port){
+int communication::connectToServer(char dest_IP_Address[],int dest_port){
 	int sockfd;
 		struct sockaddr_in servaddr;
 
@@ -67,13 +67,15 @@ int communication::writeToSocket(int sockfd, void *buffer, int size){
 		exit(0);
 	}
 	// printf("message sent");
+	return n_send;
 }
 int communication::readFromSocket(int sockfd, void *buffer, int size){
-	ssize_t n_send = recv(sockfd, buffer, size, 0);
-		if (n_send < 0) {
+	ssize_t n_recv = recv(sockfd, buffer, size, 0);
+		if (n_recv < 0) {
 			printf("\nError in Receiving");
 			exit(0);
 		}
+	return n_recv;
 }
 
 int communication::closeSocket(int sockfd){
@@ -86,46 +88,7 @@ int communication::sendMessage(struct Packet message, char dest_IP_Address[13],i
 	closeSocket(sockfd);
 
 }
-/*
-int communication::sendMessage(struct Packet message) {
-	int sockfd;
-	struct sockaddr_in servaddr;
-  
-	 creating a socket
-	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		printf("\n Error in socket");
-		exit(0);
-	}
-    printf("Socket created");
-	 configuring server address structure
-	bzero(&servaddr, sizeof(servaddr));
-	servaddr.sin_family = AF_INET;
-	servaddr.sin_port = htons(this->dest_port);
-	printf("Socket configured");
-	servaddr.sin_addr.s_addr = inet_addr(this->dest_IP_Address);
-	if (inet_pton(AF_INET, this->dest_IP_Address, &servaddr.sin_addr) <= 0) {
-		printf("\n Error in inet_pton");
-		exit(0);
-	}
 
-	 connecting to the server
-	
-	if (connect(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0) {
-		printf("\nError in connect");
-		exit(0);
-	}
-	 printf("Socket connected to server");
-	Sending to the server
-	printf("%d sizeof  ",sizeof(message));
-	ssize_t n_send = send(sockfd, (void *) &message, sizeof(message), 0);
-	if (n_send < 0) {
-		printf("\nError in Sending");
-		exit(0);
-	}
-	 printf("message sent");
-
-return 0;
-}*/
 
 void DieWithError(char *errorMessage)
 {
@@ -138,8 +101,7 @@ void DieWithError(char *errorMessage);  /* Error handling function */
 void HandleTCPClient(int clntSocket, wqueue<Packet*>& m_queue)
 {
 	printf("Entered handling client");
-	//wqueue<Packet*>*m_queue = (wqueue<Packet*>*)queue;
-	printf("sdfsdgfdhgd");
+
     char echoBuffer[RCVBUFSIZE] = {'\0'};        /* Buffer for echo string */
     int recvMsgSize;                    /* Size of received message */
     Packet message;
@@ -223,8 +185,8 @@ int communication::serverListen(int portNum,wqueue<Packet*>& queue)
         /* clntSock is connected to a client! */
         char *client_ip = inet_ntoa(echoClntAddr.sin_addr);
         printf("\nclient socket %d, addlen : %d %s\n",clntSock,sizeof(client_ip),client_ip);
-        //printf("Handling client %s\n", inet_ntoa(echoClntAddr.sin_addr));
-        printf("sdfsdfsdf");
+        printf("Handling client %s\n", inet_ntoa(echoClntAddr.sin_addr));
+        //printf("sdfsdfsdf");
         HandleTCPClient(clntSock,queue);
         //del++;
     }

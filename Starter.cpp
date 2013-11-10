@@ -8,12 +8,10 @@
 #include "Starter.h"
 #include "communication.h"
 Starter::Starter() {
-	node = Torum::getInstance();
-	node->init();
-	char controllerIP[] = "10.176.67.65";
-	int port = 1235;
+	char controllerIP[] = "10.176.67.108";
+	int port = 3498;
 	registerAtController(controllerIP, port);
-	startListener(node);
+	decideAlgorithm();
 }
 
 Starter::~Starter() {
@@ -25,26 +23,60 @@ Starter::~Starter() {
  */
 void Starter::registerAtController(char controllerIP[],int port){
 	//communication
-	Packet msg;
-	msg.TYPE=0;
+
 	communication com;
-	//strcpy(com.dest_IP_Address,controllerIP);
-	//com.dest_port=port;
-	com.sendMessage(msg);
-	
-	//implement the reciever in reciever thread if msg type=0 listen to get the quorum table and nodeid
-	
-	//send a status message
-	int id;//receive a node id
-	node->setID(id);
-	//receive quorum table
-	int **quorum;
-	node->getQuorumTable(quorum,5,16);
+	int sockfd = com.connectToServer(controllerIP,port);
+
+	int z;
+	char buf[32];
+	z = gethostname(buf,sizeof buf);
+	if ( z == -1 ) {
+		fprintf(stderr, "%s: gethostname(2)\n",
+		strerror(errno));
+		exit(1);
+	}
+	com.writeToSocket(sockfd,(void*)buf,sizeof(buf)*sizeof(char));
+	com.readFromSocket(sockfd,&id,sizeof(id)*sizeof(int));
+	int32_t qsize,nsize;
+	com.readFromSocket(sockfd,&qsize,sizeof(qsize)*sizeof(int32_t));
+	com.readFromSocket(sockfd,&nsize,sizeof(nsize)*sizeof(int32_t));
+	int32_t quorum[nsize][qsize];
+	com.readFromSocket(sockfd,quorum,qsize*nsize*sizeof(int32_t));
+	Quorum = new int*[qsize];
+		for(int i = 0; i < nsize; ++i)
+			Quorum[i] = new int[qsize];
+	for(int j = 0; j<nsize;j++){
+	for(int i =0;i<qsize;i++){
+		Quorum[j][i] = quorum[j][i];
+		printf("%d\t",quorum[j][i]);
+	}
+	printf("\n");
+	}
+	com.closeSocket(sockfd);
 
 }
 
-void Starter::startListener(Torum *node){
-	//create new thread and pass this node reference to it
-	// thread will listen for incoming connections.
-	// if a message is received we handle it by calling appropriate method.
+void Starter::decideAlgorithm(){
+	printf("Enter the Algorithm for the nodes to follow:\n");
+	printf("\t\t1:maekawa\t2:Torum\n");
+	int algo=0;
+	scanf("%d",&algo);
+	if(algo == 0){
+		//maekawa
+	}else if(algo == 1){
+		//Torum
+
+	}else
+		printf("Invalid input\n");
+
+}
+
+void Starter::Algorithm2(){
+	node = Torum::getInstance();
+			node->init();
+			node->setID(id);
+			node->getQuorumTable(Quorum,quorumSize,NumNodes);
+}
+void Starter::Algorithm1(){
+
 }

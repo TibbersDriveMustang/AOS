@@ -1,8 +1,6 @@
 #ifndef MESSAGEFORMAT_H
 #define MESSAGEFORMAT_H
 
-#pragma once
-
 #define REQUEST 0
 #define HAVE_TOKEN 1
 #define RELEASE 2

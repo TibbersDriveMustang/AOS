@@ -13,6 +13,7 @@
 #include <stdlib.h>     /* for atoi() and exit() */
 #include <string.h>     /* for memset() */
 #include <unistd.h>     /* for close() */
+
 #include "wqueue.h"
 #include "MessageFormat.h"
 
@@ -28,7 +29,7 @@ public:
 	string source_IP_Address;
 	//int dest_port;
 
-	int connectToServer(char dest_IP_Address[13],int dest_port);
+	int connectToServer(char dest_IP_Address[],int dest_port);
 	int writeToSocket(int sockfd, void *buffer, int size);
 	int readFromSocket(int sockfd, void *buffer, int size);
 	int closeSocket(int sockfd);

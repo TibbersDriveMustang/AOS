@@ -1,7 +1,6 @@
 #ifndef ALGO9_H_
 #define ALGO9_H_
 
-#pragma once
 #include <iostream>
 #include <vector>
 #include "MessageFormat.h"
