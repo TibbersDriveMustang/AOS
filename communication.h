@@ -7,7 +7,6 @@
 #include <netdb.h>
 #include<string>
 #include<errno.h>
-#include <errno.h>
 #include "MessageFormat.h"
 #include <stdio.h>      /* for printf() and fprintf() */
 #include <sys/socket.h> /* for socket(), bind(), and connect() */
@@ -15,6 +14,7 @@
 #include <stdlib.h>     /* for atoi() and exit() */
 #include <string.h>     /* for memset() */
 #include <unistd.h>     /* for close() */
+#include "wqueue.h"
 
 #define MAXPENDING 5    /* Maximum outstanding connection requests */
 #define RCVBUFSIZE 32   /* Size of receive buffer */
@@ -29,7 +29,7 @@ public:
 	int dest_port;
 
 	int sendMessage(struct Packet message);
-	int serverListen(int portNum);
+	int serverListen(int portNum,void* queue);
 
 };
 

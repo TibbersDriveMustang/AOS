@@ -89,7 +89,7 @@ bool Torum::receiveToken(Packet token){
 bool Torum::receiveRelease(Packet release){
 	if(sequenceNo<release.SEQ) sequenceNo = release.SEQ;
 	HOLDER = -1;
-	queue->update();
+	queue->update(quorum,quorumsize,ID);
 	return true;
 }
 
@@ -114,7 +114,7 @@ bool Torum::sendToken(){
 			//send(release,quorum[ID][i]);
 		i++;
 		}
-	queue->update();
+	queue->update(quorum,quorumsize,ID);
 	
 	struct Packet token;
 		token.TYPE = SEND_TOKEN;

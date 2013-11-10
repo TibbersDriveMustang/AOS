@@ -10,7 +10,7 @@
 #include <cstdlib>
 #include <pthread.h>
 using namespace std;
-
+/*
 void *fun(void*)
 {
 
@@ -43,6 +43,6 @@ int main() {
 	}
 	return 0;
 }
-
+*/
 
 

@@ -12,19 +12,19 @@ LexiQueue::~LexiQueue(void)
 
 }
 
-AlgoMsg LexiQueue::remove(int origin, long seq){
-	AlgoMsg top;
+Packet LexiQueue::remove(int origin, long seq){
+	Packet top;
 	top.TYPE = -1;
 	if(!pq.empty()){
-			top = (AlgoMsg)pq.top();
+			top = (Packet)pq.top();
 			pq.pop();
 			return top;
 		}
 		return top;
 }
 
-AlgoMsg LexiQueue::top(){
-	AlgoMsg top;
+Packet LexiQueue::top(){
+	Packet top;
 	top.TYPE = -1;
 	if(!pq.empty()){
 		top = pq.top();

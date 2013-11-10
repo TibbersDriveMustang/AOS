@@ -10,7 +10,7 @@ using namespace std;
 
 class CompareMessages{
 public:
-	bool operator()(AlgoMsg& m1,AlgoMsg& m2){
+	bool operator()(Packet& m1,Packet& m2){
 		if(m2.SEQ < m1.SEQ) return true;
 		if(m2.SEQ == m1.SEQ && m2.ORIGIN < m1.ORIGIN) return true;
 		return false;

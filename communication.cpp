@@ -89,7 +89,7 @@ void DieWithError(char *errorMessage);  /* Error handling function */
 
 void HandleTCPClient(int clntSocket, void* queue)
 {
-	wqueue<Packet*>*m_queue=(wqueue<Packet*>*)queue;
+	wqueue<Packet*>*m_queue = (wqueue<Packet*>*)queue;
 	
     char echoBuffer[RCVBUFSIZE] = {'\0'};        /* Buffer for echo string */
     int recvMsgSize;                    /* Size of received message */
@@ -132,14 +132,14 @@ Packet *message1;
 
     close(clntSocket);    /* Close client socket */
 }
-int communication::serverListen(int portNum,void* queue))
+int communication::serverListen(int portNum,void* queue)
 {
     int servSock;                    /* Socket descriptor for server */
     int clntSock;                    /* Socket descriptor for client */
     struct sockaddr_in echoServAddr; /* Local address */
     struct sockaddr_in echoClntAddr; /* Client address */
     unsigned short echoServPort;     /* Server port */
-    unsigned int clntLen;            /* Length of client address data structure */
+    int clntLen;            /* Length of client address data structure */
 
    
     echoServPort = portNum;  /* First arg:  local port */
@@ -168,15 +168,14 @@ int communication::serverListen(int portNum,void* queue))
         clntLen = sizeof(echoClntAddr);
 
         /* Wait for a client to connect */
-        if ((clntSock = accept(servSock, (struct sockaddr *) &echoClntAddr,
-                               &clntLen)) < 0)
+        if ((clntSock = accept(servSock, (struct sockaddr *) &echoClntAddr,&clntLen)) < 0)
             DieWithError("accept() failed");
 
         /* clntSock is connected to a client! */
 
         printf("Handling client %s\n", inet_ntoa(echoClntAddr.sin_addr));
 
-        HandleTCPClient(clntSock,(void *)&queue));
+        HandleTCPClient(clntSock,(void *)&queue);
         del++;
     }
     /* NOT REACHED */
