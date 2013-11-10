@@ -8,7 +8,7 @@
 
 void *function(void* queue) {
 	communication com;
-	com.serverListen(1235,(void *)&queue));
+	com.serverListen(1235,(void *)&queue);
 	return NULL;
 }
 
