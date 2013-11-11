@@ -7,6 +7,7 @@
 #define HAVE_TOKEN 1
 #define RELEASE 2
 #define SEND_TOKEN 3
+#define LISTEN_PORT 3499
 
 	/*struct AlgoMsg{
 		int TYPE; // 0: request_token, 1: have-token, 2: release, 3:send-token

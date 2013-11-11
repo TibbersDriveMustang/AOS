@@ -3,6 +3,9 @@
 using namespace std;
 
 #define MAXNODES 16
+#define MAXLENGTH 15
+static char mapIPtoID[MAXNODES][MAXLENGTH];
+
 
 //Msg type=100
 Controller::Controller(void):QuorumTable{{0, 1, 2, 3, 4, 8, 12}, 
@@ -23,11 +26,11 @@ Controller::Controller(void):QuorumTable{{0, 1, 2, 3, 4, 8, 12},
 		{12, 13, 14, 15, 3, 7, 11}
 }
 {
-
+	
 }
 Controller::~Controller(void)
 {
-	delete QuorumTable;
+	//delete QuorumTable;
 }
 
 void DieWithError1(char *errorMessage)
@@ -103,6 +106,10 @@ void Controller::handle(int clntSock1,char* client_ip,int counter)
 	}
 	com.writeToSocket(clntSock1,const_cast<char*> (strToSend.c_str()), strToSend.length());	
 	cout<<"Sent Msg - "<<strToSend<<endl;
+	
+	printf("Counter value %d",counter);
+	strcpy(mapIPtoID[counter], client_ip);
+	printf("MaptoIP %s",mapIPtoID[counter]);
 		
 	//delete row;
 	int k = close(clntSock1);
@@ -114,8 +121,8 @@ void Controller::handle(int clntSock1,char* client_ip,int counter)
 }
 
 void *listener(void*) {
-	Controller con;
 	
+	Controller con;
 	printf("In Listener\n");
 	/*communication com;
 	com.serverListen(1235,m_queue);*/
@@ -128,7 +135,7 @@ void *listener(void*) {
 	    socklen_t clntLen;            /* Length of client address data structure */
 
 	   
-	    echoServPort = 3598;  /* First arg:  local port */
+	    echoServPort = LISTEN_PORT;  /* First arg:  local port */
 
 	    /* Create socket for incoming connections */
 	    if ((servSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
@@ -148,7 +155,7 @@ void *listener(void*) {
 	    if (listen(servSock, MAXPENDING) < 0)
 	        DieWithError1("listen() failed");
 	    //int del=0;
-	    for (;counter<MAXNODES+1;) /* Run forever */
+	    for (;counter<2+1;) /* Run forever */
 	    {
 	        /* Set the size of the in-out parameter */
 	        clntLen = sizeof(echoClntAddr);
@@ -165,21 +172,56 @@ void *listener(void*) {
 	        printf("\nClient socket %d, addlen : %d %s\n",clntSock,sizeof(client_ip),client_ip);
 	        con.handle(clntSock,client_ip,counter);
 	        counter++;
-	        
+	        printf("Counter value %d",counter);
 	    }
 	
 	
-	
-	return NULL;
+	printf("Came out of for");
+	//return NULL;
 }
 
+void sendTokenToNode()
+{
+	printf("In send token");
+	//Send token
+	Packet pack;
+	pack.TYPE=SEND_TOKEN;
+	pack.ORIGIN=45;
+	pack.SEQ=1;
+	pack.sender=45;
+	
+	communication com;
+	printf("Map to ID %s",mapIPtoID[0]);
+	char desIP[15];
+	strncpy(desIP,mapIPtoID[1],15);
+	printf("des to ID %s",desIP);
+	
+	com.sendMessage(pack,desIP,LISTEN_PORT);
+}
 int main()
 {
-	
-	
+/*	int i;
+	for(i=0; i <MAXNODES ; i++) {
+		mapIPtoID[i] = (char *)malloc(sizeof(char)*MAXLENGTH);
+	}
+	*/
 	printf("Welcome to Controller Function!!\n");
 	pthread_t listen;
 		pthread_create(&listen, NULL,listener, NULL);
 		pthread_join(listen,NULL);
+		
+		//Enter the algo and send token to 1 if algo=2
+		
+		printf("Enter the Algorithm for the nodes to follow:\n");
+		printf("\t\t1:Maekawa\t2:Torum\n");
+		int algo=0;
+		scanf("%d",&algo);
+		if(algo == 2){
+			sendTokenToNode();
+
+		}else
+			printf("Invalid input\n");
+		
+		
 		return 0;
 }

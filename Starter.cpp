@@ -21,7 +21,7 @@ Starter::~Starter() {
 
 void Starter::init(){
 	char controllerIP[15] = "10.176.67.108";
-	int port = 3598;
+	int port = LISTEN_PORT;
 	registerAtController(controllerIP, port);
 	decideAlgorithm();
 }
@@ -154,7 +154,7 @@ void Starter::registerAtController(char controllerIP[15],int port){
 
 void Starter::decideAlgorithm(){
 	printf("Enter the Algorithm for the nodes to follow:\n");
-	printf("\t\t1:maekawa\t2:Torum\n");
+	printf("\t\t1:Maekawa\t2:Torum\n");
 	int algo=0;
 	scanf("%d",&algo);
 	if(algo == 1){
@@ -193,7 +193,7 @@ void *TorumListen(void* queue) {
 	printf("Listener created");
 	wqueue<Packet*> m_queue=*((wqueue<Packet*>*)queue);
 	communication com;
-	com.serverListen(1235,m_queue);
+	com.serverListen(LISTEN_PORT,m_queue);
 	return NULL;
 }
 
@@ -211,6 +211,9 @@ void *TorumProcess(void* queue) {
 				i, item->TYPE, item->SEQ);
 		if (item->TYPE == 999) {
 			//Recieve Quorum table and NodeID
+		}
+		if (item->TYPE == SEND_TOKEN){
+			printf("Token Recieved from %d",item->ORIGIN);
 		}
 
 		delete item;

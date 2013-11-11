@@ -32,7 +32,7 @@ using namespace std;
 	return 0;
 }*/
 
-int communication::connectToServer(char dest_IP_Address[],int dest_port){
+int communication::connectToServer(char dest_IP_Address[15],int dest_port){
 	int sockfd;
 		struct sockaddr_in servaddr;
 
@@ -85,7 +85,7 @@ int communication::closeSocket(int sockfd){
 	return close(sockfd);
 }
 
-int communication::sendMessage(struct Packet message, char dest_IP_Address[13],int dest_port){
+int communication::sendMessage(struct Packet message, char dest_IP_Address[15],int dest_port){
 	int sockfd = connectToServer(dest_IP_Address,dest_port);
 	writeToSocket(sockfd,(void*)&message,sizeof(message));
 	closeSocket(sockfd);
