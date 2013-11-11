@@ -20,6 +20,7 @@ class Controller
 {
 public:
 	int QuorumTable[16][7];
+	
 	Controller(void);
 	void handle(int clntSock1,char* client_ip,int counter);
 	~Controller(void);
