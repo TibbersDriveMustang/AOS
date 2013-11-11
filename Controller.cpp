@@ -1,4 +1,7 @@
 #include "Controller.h"
+#include <iostream>
+using namespace std;
+
 #define MAXNODES 16
 
 //Msg type=100
@@ -56,22 +59,64 @@ void Controller::handle(int clntSock1,char* client_ip,int counter)
 	};*/
 	
 	communication com;
-	char msg[32];
-	com.readFromSocket(clntSock1,msg,32*sizeof(char));
+	char msg[128]={'\0',};
+	int sd=0;
+	com.readFromSocket(clntSock1,msg,128);
+	puts("returned\n");
 	printf("Client %s is UP",msg);
-	int32_t qColSize=7;
-	int32_t qRowSize=16;
+	puts("\n");
+	int qColSize=7;
+	int qRowSize=16;
+	puts("\n");
 	com.writeToSocket(clntSock1,&counter,sizeof(int));
-	com.writeToSocket(clntSock1,&qColSize,sizeof(qColSize)*sizeof(int32_t));
-	com.writeToSocket(clntSock1,&qRowSize,sizeof(qColSize)*sizeof(int32_t));
-	com.writeToSocket(clntSock1,QuorumTable,sizeof(QuorumTable));
-	close(clntSock1);
+	com.writeToSocket(clntSock1,&qColSize,sizeof(int));
+	com.writeToSocket(clntSock1,&qRowSize,sizeof(int));
+	//int size = sizeof(QuorumTable);
+	//com.writeToSocket(clntSock1,&size,sizeof(int));
+	puts("quorum table");
+	for(int i=0;i<qRowSize;i++){
+		for(int j=0;j<qColSize;j++){
+			printf("%d\t",QuorumTable[i][j]);
+		}
+		printf("\n");	
+		
+	}
+	int row[qColSize];// = new int[qColSize];
+	//for(int i=0;i<qColSize;i++)
+	//row[i] = QuorumTable[14][i];
+	//com.writeToSocket(clntSock1,row,sizeof(row)*sizeof(int));
+	string strToSend,tempStr; strToSend.clear(); tempStr.clear();
+	char temp[5] = {0,};
+	for(int i=0;i<qRowSize;i++){
+		for(int j=0;j<qColSize;j++){
+			//row[j] = QuorumTable[i][j];
+			snprintf(temp,4,"%d",QuorumTable[i][j]);
+			tempStr = temp;
+			strToSend += tempStr;
+			strToSend += ":";
+			memset(&temp,0,sizeof(temp));
+			tempStr.clear();
+		}
+		//printf("size: %d\n",sizeof(row)*sizeof(int));
+		//com.writeToSocket(clntSock1,row,sizeof(row)*sizeof(int));	
+		
+	}
+	com.writeToSocket(clntSock1,const_cast<char*> (strToSend.c_str()), strToSend.length());	
+	cout<<"Sent Msg - "<<strToSend<<endl;
+		
+	//delete row;
+	int k = close(clntSock1);
+	if (k < 0) {
+		printf("\nError in Closing");
+		exit(0);
+	}
+
 }
 
 void *listener(void*) {
 	Controller con;
 	
-	printf("Listener created");
+	printf("In Listener\n");
 	/*communication com;
 	com.serverListen(1235,m_queue);*/
 	int counter=1;
@@ -83,7 +128,7 @@ void *listener(void*) {
 	    socklen_t clntLen;            /* Length of client address data structure */
 
 	   
-	    echoServPort = 3498;  /* First arg:  local port */
+	    echoServPort = 3598;  /* First arg:  local port */
 
 	    /* Create socket for incoming connections */
 	    if ((servSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
@@ -110,7 +155,10 @@ void *listener(void*) {
 
 	        /* Wait for a client to connect */
 	        if ((clntSock = accept(servSock, (struct sockaddr *) &echoClntAddr,&clntLen)) < 0)
-	            DieWithError1("accept() failed");
+	        {
+	        	close(servSock);
+	        	DieWithError1("accept() failed");
+	        }
 
 	        /* clntSock is connected to a client! */
 	        char *client_ip = inet_ntoa(echoClntAddr.sin_addr);
@@ -129,7 +177,7 @@ int main()
 {
 	
 	
-	printf("Welcome to Controller Function!!");
+	printf("Welcome to Controller Function!!\n");
 	pthread_t listen;
 		pthread_create(&listen, NULL,listener, NULL);
 		pthread_join(listen,NULL);

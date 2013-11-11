@@ -60,6 +60,7 @@ int main() {
 		printf("hostname: %s\n",buf);
 
 		Starter s;
+		s.init();
 	return 0;
 }
 

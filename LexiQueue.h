@@ -1,6 +1,7 @@
 #ifndef LEXIQUEUE_H_
 #define LEXIQUEUE_H_
 
+#pragma once
 #include "MessageFormat.h"
 #include <cstdlib>
 #include <queue>

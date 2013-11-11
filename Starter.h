@@ -8,9 +8,12 @@
 #ifndef STARTER_H_
 #define STARTER_H_
 
+#include <vector>
+#include <string>
 #include <iostream>
 #include <pthread.h>
 #include "Algo9.h"
+#include "communication.h"
 
 using namespace std;
 
@@ -21,13 +24,16 @@ private:
 	int NumNodes;
 	int **Quorum;
 	int id;
+	
+	void parseMsg(const string& s,const string& delim,std::vector<string>& tokens);
 public:
 	Starter();
 	virtual ~Starter();
+	void init();
 	void registerAtController(char controllerIP[],int port);
 	void decideAlgorithm();
-	void Starter::Algorithm1();
-	void Starter::Algorithm2();
+	void Algorithm1();
+	void Algorithm2();
 };
 
 #endif /* STARTER_H_ */

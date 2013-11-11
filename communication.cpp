@@ -1,6 +1,8 @@
 
-#include"communication.h"
 
+#include"communication.h"
+#include <iostream>
+using namespace std;
 
 /*struct AlgoMsg{
 	int TYPE; // 0: request_token, 1: have-token, 2: release, 3:send-token
@@ -70,11 +72,12 @@ int communication::writeToSocket(int sockfd, void *buffer, int size){
 	return n_send;
 }
 int communication::readFromSocket(int sockfd, void *buffer, int size){
-	ssize_t n_recv = recv(sockfd, buffer, size, 0);
+	ssize_t n_recv = recv(sockfd, (void*) buffer, size, 0);
 		if (n_recv < 0) {
 			printf("\nError in Receiving");
 			exit(0);
 		}
+	cout<<"Received "<<buffer<<endl;
 	return n_recv;
 }
 

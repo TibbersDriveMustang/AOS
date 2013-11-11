@@ -38,5 +38,7 @@ public:
 
 };
 
+void *TorumListen(void* queue);
+void *TorumProcess(void* queue);
 
 #endif /*COMMUNICATION_H_*/
