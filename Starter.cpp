@@ -23,6 +23,7 @@ void Starter::init(){
 	char controllerIP[15] = "10.176.67.108";
 	int port = 3598;
 	registerAtController(controllerIP, port);
+	decideAlgorithm();
 }
 
 void Starter::parseMsg(const string& s,const string& delim,std::vector<string>& tokens)
