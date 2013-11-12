@@ -1,10 +1,3 @@
-/*
- * Starter.cpp
- *
- *  Created on: Nov 6, 2013
- *      Author: kaushik sirineni
- */
-
 #include "Starter.h"
 
 Starter::Starter() {
@@ -20,8 +13,9 @@ Starter::~Starter() {
 }
 
 void Starter::init(){
-	char controllerIP[15] = "10.176.67.108";
-	int port = LISTEN_PORT;
+	//char controllerIP[15] = "10.176.67.108";
+	char controllerIP[15] = "10.176.67.89";
+	int port = LISTEN_PORT1;
 	registerAtController(controllerIP, port);
 	decideAlgorithm();
 }
@@ -96,12 +90,12 @@ void Starter::registerAtController(char controllerIP[15],int port){
             Quorum[i][j] = 0;
         }
     }
-	for(int i=0;i<nsize;i++){
+	/*for(int i=0;i<nsize;i++){
 		for(int j=0;j<qsize;j++){
 			printf("%d\t",Quorum[i][j]);
 		}
 		printf("\n");			
-	}
+	}*/
 	puts("Getting quorum table\n");
 	char recvdMsg[4096] = {'\0',};
 	com.readFromSocket(sockfd,recvdMsg,4095);
@@ -109,12 +103,12 @@ void Starter::registerAtController(char controllerIP[15],int port){
 	vector<string> recvdValues;
 	string delimiter = ":";
 	parseMsg(recvdStr,delimiter,recvdValues);
-	
+	/*
 	for (int i=0; i<recvdValues.size();i++)
 	{
 		cout<<recvdValues[i]<<endl; //<-- extract values from this vector and push into the attay in 123 line
 		
-	}
+	}*/
 	for(int i=0; i<nsize;i++)
 	{
 		for(int j=0; j<qsize;j++)
@@ -133,17 +127,8 @@ void Starter::registerAtController(char controllerIP[15],int port){
 		printf("\n");	
 		
 	}
-	/*for(int j = 0; j<nsize;j++){
-		//printf("size: %d\n",sizeof(row)*sizeof(int));
-		com.readFromSocket(sockfd,row,sizeof(row)*sizeof(int));
-		for(int i =0;i<qsize;i++){
-			Quorum[j][i] = row[i];
-			printf("%d\t",Quorum[j][i]);
-		}	
-		printf("\n");
-	}*/
-	//delete row;
-	int k = 0;//com.closeSocket(sockfd);
+	shutdown(sockfd,2);
+	int k = com.closeSocket(sockfd);
 	if (k < 0) {
 			printf("\nError in Closing");
 			exit(0);
@@ -153,14 +138,40 @@ void Starter::registerAtController(char controllerIP[15],int port){
 }
 
 void Starter::decideAlgorithm(){
-	printf("Enter the Algorithm for the nodes to follow:\n");
-	printf("\t\t1:Maekawa\t2:Torum\n");
-	int algo=0;
-	scanf("%d",&algo);
+	printf("\nIn decideAlgorithm() of Node\n");
+	communication com;
+	int serfd;
+	int clifd = com.OpenListener(serfd,LISTEN_PORT2);
+	//char buffer[4095]={'\0',};
+	int intbuf;
+	com.readFromSocket(clifd,&intbuf,sizeof(int));
+	printf("recvd: %d\n",intbuf);
+	puts("Getting ID to IP map\n");
+	//assigining memory to mapIDtoIP
+	mapIDtoIP = new char*[NumNodes];
+	for(int i = 0; i < NumNodes; ++i){
+		mapIDtoIP[i] = new char[MAXLENGTH_IP_ADDR];
+	}
+
+	char recvdMsg[4096] = {'\0',};
+	strcpy(mapIDtoIP[0],"hello");
+	com.readFromSocket(clifd,recvdMsg,4095);
+	string recvdStr = recvdMsg;
+	vector<string> recvdValues;
+	string delimiter = ":";
+	parseMsg(recvdStr,delimiter,recvdValues);
+	for(int i=0;i<NumNodes;i++){
+		strcpy(mapIDtoIP[i],recvdValues[i].c_str());
+		printf("%d\t%s\n",i,mapIDtoIP[i]);
+	}
+	shutdown(clifd,2);
+	com.closeSocket(clifd);
+	com.closeSocket(serfd);
+	int algo = intbuf;
 	if(algo == 1){
 		Algorithm1();
 	}else if(algo == 2){
-		Algorithm2();
+		//Algorithm2();
 
 	}else
 		printf("Invalid input\n");
@@ -168,24 +179,25 @@ void Starter::decideAlgorithm(){
 }
 
 void Starter::Algorithm1(){
-
+	printf("Starting Algorithm 1: Maekawa\n");
 }
 
 void Starter::Algorithm2(){
+	printf("Starting Algorithm 2: Torum\n");
 	node = Torum::getInstance();
 	node->init();
 	node->setID(id);
 	node->getQuorumTable(Quorum,quorumSize,NumNodes);
 
 	wqueue<Packet*> queue;
-	pthread_t thread1;
-	pthread_create(&thread1, NULL, TorumProcess,(void *)&queue);
+	pthread_t ProcessingThread;
+	pthread_create(&ProcessingThread, NULL, TorumProcess,(void *)&queue);
 
-	pthread_t thread2;
-	pthread_create(&thread2, NULL, TorumListen, (void *)&queue);
+	pthread_t ListenerThread;
+	pthread_create(&ListenerThread, NULL, TorumListen, (void *)&queue);
 
-	pthread_join(thread1, NULL);
-	pthread_join(thread2, NULL);
+	pthread_join(ProcessingThread, NULL);
+	pthread_join(ListenerThread, NULL);
 	printf("Torum execution done\n");
 }
 
@@ -193,7 +205,7 @@ void *TorumListen(void* queue) {
 	printf("Listener created");
 	wqueue<Packet*> m_queue=*((wqueue<Packet*>*)queue);
 	communication com;
-	com.serverListen(LISTEN_PORT,m_queue);
+	com.serverListen(LISTEN_PORT3,m_queue);
 	return NULL;
 }
 

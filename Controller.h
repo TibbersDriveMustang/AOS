@@ -15,14 +15,24 @@
 #include"communication.h"
 using namespace std;
 
-
+#define MAXNODES 2
+#define QuorumSize 7
 class Controller
 {
+private:
+	int Algorithm;
+
 public:
-	int QuorumTable[16][7];
-	
+
+	int QuorumTable[MAXNODES][QuorumSize];
+	char mapIPtoID[MAXNODES][MAXLENGTH_IP_ADDR];
+
 	Controller(void);
-	void handle(int clntSock1,char* client_ip,int counter);
+	void handle(int clntSock1,char* client_ip,int counter,Controller *con);
 	~Controller(void);
+	void initiate(Controller *c);
+	void decideAlgorithm();
+	void Algorithm1();
+	void Algorithm2();
 };
 

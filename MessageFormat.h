@@ -7,7 +7,11 @@
 #define HAVE_TOKEN 1
 #define RELEASE 2
 #define SEND_TOKEN 3
-#define LISTEN_PORT 3499
+#define LISTEN_PORT1 3499
+#define LISTEN_PORT2 3599
+#define LISTEN_PORT3 3699
+
+#define MAXLENGTH_IP_ADDR 16
 
 	/*struct AlgoMsg{
 		int TYPE; // 0: request_token, 1: have-token, 2: release, 3:send-token

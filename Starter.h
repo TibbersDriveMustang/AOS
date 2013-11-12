@@ -24,7 +24,7 @@ private:
 	int NumNodes;
 	int **Quorum;
 	int id;
-	
+	char **mapIDtoIP;
 	void parseMsg(const string& s,const string& delim,std::vector<string>& tokens);
 public:
 	Starter();

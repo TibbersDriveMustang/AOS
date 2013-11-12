@@ -6,7 +6,7 @@
 #include "wqueue.h"
 #include "communication.h"
 
-void *TorumListen(void* queue) {
+void *Listen(void* queue) {
 	printf("Listener createxdd");
 	wqueue<Packet*> m_queue=*((wqueue<Packet*>*)queue);
 	communication com;
@@ -14,7 +14,7 @@ void *TorumListen(void* queue) {
 	return NULL;
 }
 
-void *TorumProcess(void* queue) {
+void *Process(void* queue) {
 	printf("Procdess hrw cr");
 	wqueue<Packet*>*m_queue=(wqueue<Packet*>*)queue;
 

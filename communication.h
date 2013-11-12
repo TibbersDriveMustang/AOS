@@ -24,10 +24,10 @@ using namespace std;
 
 
 class communication {
+private:
+	void HandleTCPClient(int clntSocket, wqueue<Packet*>& m_queue);
+	void DieWithError(string errorMessage);
 public:
-	//char dest_IP_Address[13];
-	string source_IP_Address;
-	//int dest_port;
 
 	int connectToServer(char dest_IP_Address[],int dest_port);
 	int writeToSocket(int sockfd, void *buffer, int size);
@@ -35,6 +35,8 @@ public:
 	int closeSocket(int sockfd);
 	int sendMessage(Packet message,char dest_IP_Address[13],int dest_port);
 	int serverListen(int portNum,wqueue<Packet*>& queue);
+	int OpenListener(int& serfd,int port);
+
 
 };
 

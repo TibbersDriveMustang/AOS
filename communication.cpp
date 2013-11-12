@@ -33,7 +33,7 @@ using namespace std;
 }*/
 
 int communication::connectToServer(char dest_IP_Address[15],int dest_port){
-	int sockfd;
+		int sockfd;
 		struct sockaddr_in servaddr;
 
 		/* creating a socket */
@@ -41,13 +41,13 @@ int communication::connectToServer(char dest_IP_Address[15],int dest_port){
 			printf("\n Error in socket");
 			exit(0);
 		}
-	    printf("Socket created");
+	    printf("Socket created, ");
 
 	    /* configuring server address structure */
 		bzero(&servaddr, sizeof(servaddr));
 		servaddr.sin_family = AF_INET;
 		servaddr.sin_port = htons(dest_port);
-		printf("Socket configured");
+		printf("Socket configured, ");
 		if (inet_pton(AF_INET, dest_IP_Address, &servaddr.sin_addr) <= 0) {
 				printf("\n Error in inet_pton");
 				exit(0);
@@ -58,15 +58,14 @@ int communication::connectToServer(char dest_IP_Address[15],int dest_port){
 			printf("\nError in connect");
 			exit(0);
 		}
-		printf("Socket connected to server");
+		printf("Socket connected to server \n");
 		return sockfd;
 }
 
 int communication::writeToSocket(int sockfd, void *buffer, int size){
 	ssize_t n_send = send(sockfd,(void*) buffer, size, 0);
 	if (n_send < 0) {
-		printf("\nError in Sending");
-		exit(0);
+		DieWithError("\nError in Sending\n");
 	}
 	// printf("message sent");
 	return n_send;
@@ -74,8 +73,7 @@ int communication::writeToSocket(int sockfd, void *buffer, int size){
 int communication::readFromSocket(int sockfd, void *buffer, int size){
 	ssize_t n_recv = recv(sockfd, (void*) buffer, size, 0);
 		if (n_recv < 0) {
-			printf("\nError in Receiving");
-			exit(0);
+			DieWithError("\nError in Receiving\n");
 		}
 	cout<<"Received "<<buffer<<endl;
 	return n_recv;
@@ -88,24 +86,23 @@ int communication::closeSocket(int sockfd){
 int communication::sendMessage(struct Packet message, char dest_IP_Address[15],int dest_port){
 	int sockfd = connectToServer(dest_IP_Address,dest_port);
 	writeToSocket(sockfd,(void*)&message,sizeof(message));
-	closeSocket(sockfd);
+	return closeSocket(sockfd);
 
 }
 
 
-void DieWithError(char *errorMessage)
+void communication::DieWithError(string errorMessage)/* Error handling function */
 {
-    perror(errorMessage);
+
+    perror(errorMessage.c_str());
     exit(1);
 }
 
-void DieWithError(char *errorMessage);  /* Error handling function */
-
-void HandleTCPClient(int clntSocket, wqueue<Packet*>& m_queue)
+void communication::HandleTCPClient(int clntSocket, wqueue<Packet*>& m_queue)
 {
 	printf("Entered handling client");
 
-    char echoBuffer[RCVBUFSIZE] = {'\0'};        /* Buffer for echo string */
+    //char echoBuffer[RCVBUFSIZE] = {'\0'};        /* Buffer for echo string */
     int recvMsgSize;                    /* Size of received message */
     Packet message;
     
@@ -115,17 +112,27 @@ void HandleTCPClient(int clntSocket, wqueue<Packet*>& m_queue)
         DieWithError("recv() failed");*/
     if ((recvMsgSize = recv(clntSocket, &message, sizeof(message), 0)) < 0)
            DieWithError("recv() failed");
-printf("Message type %d\n",message.TYPE);
-printf("Message Originator %d\n", message.ORIGIN);
-printf("Message Sequ %ld\n", message.SEQ);
-printf("Message sender %ld\n", message.sender);
-Packet *message1;
+	printf("Message type %d\n",message.TYPE);
+	printf("Message Originator %d\n", message.ORIGIN);
+	printf("Message Sequ %ld\n", message.SEQ);
+	printf("Message sender %d\n", message.sender);
+
+	//if message is an Algorithm message add to queue
+	if(message.TYPE >=0 && message.TYPE <10){
+	Packet *message1;
 	message1 = (struct Packet *)malloc(sizeof(struct Packet));
 	message1->TYPE=message.TYPE;
 	message1->ORIGIN=message.ORIGIN;
 	message1->SEQ=message.SEQ;
 	message1->sender=message.sender;
 	m_queue.add(message1);
+	}//is message a technical message
+	else if(message.TYPE >=100 && message.TYPE < 1000 ){
+		//receive ID to IP mapping
+		if(message.TYPE == 100){
+
+		}
+	}
     /* Send received string and receive again until end of transmission */
     
   /*  while (recvMsgSize > 0)       zero indicates end of transmission 
@@ -187,13 +194,59 @@ int communication::serverListen(int portNum,wqueue<Packet*>& queue)
 
         /* clntSock is connected to a client! */
         char *client_ip = inet_ntoa(echoClntAddr.sin_addr);
-        printf("\nclient socket %d, addlen : %d %s\n",clntSock,sizeof(client_ip),client_ip);
-        printf("Handling client %s\n", inet_ntoa(echoClntAddr.sin_addr));
-        //printf("sdfsdfsdf");
+        printf("\nRequesting client socket %d, addlen : %d %s\n",clntSock,sizeof(client_ip),client_ip);
+        printf("Handling Node at %s\n", inet_ntoa(echoClntAddr.sin_addr));
         HandleTCPClient(clntSock,queue);
         //del++;
+        close(servSock);
+
     }
+    return 0;
     /* NOT REACHED */
+}
+
+int communication::OpenListener(int& serSock, int portNum){
+	int servSock;                    /* Socket descriptor for server */
+	int clntSock;                    /* Socket descriptor for client */
+	close(servSock);
+	struct sockaddr_in echoServAddr; /* Local address */
+	struct sockaddr_in echoClntAddr; /* Client address */
+	unsigned short echoServPort;     /* Server port */
+	socklen_t clntLen;            /* Length of client address data structure */
+
+	echoServPort = portNum;  /* First arg:  local port */
+
+	/* Create socket for incoming connections */
+	if ((servSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
+		DieWithError("socket() failed");
+
+	/* Construct local address structure */
+	memset(&echoServAddr, 0, sizeof(echoServAddr));   /* Zero out structure */
+	echoServAddr.sin_family = AF_INET;                /* Internet address family */
+	echoServAddr.sin_addr.s_addr = htonl(INADDR_ANY); /* Any incoming interface */
+	echoServAddr.sin_port = htons(echoServPort);      /* Local port */
+
+    /* Bind to the local address */
+    if (bind(servSock, (struct sockaddr *) &echoServAddr, sizeof(echoServAddr)) < 0)
+        DieWithError("bind() failed");
+
+    /* Mark the socket so it will listen for incoming connections */
+    if (listen(servSock, MAXPENDING) < 0)
+        DieWithError("listen() failed");
+    /* Set the size of the in-out parameter */
+	clntLen = sizeof(echoClntAddr);
+
+	/* Wait for a client to connect */
+	if ((clntSock = accept(servSock, (struct sockaddr *) &echoClntAddr,&clntLen)) < 0)
+		DieWithError("accept() failed");
+
+	/* clntSock is connected to a client! */
+	char *client_ip = inet_ntoa(echoClntAddr.sin_addr);
+	printf("\nRequesting client socket %d, addlen : %d %s\n",clntSock,sizeof(client_ip),client_ip);
+	printf("Handling message from Node at %s\n", inet_ntoa(echoClntAddr.sin_addr));
+
+	serSock = servSock;
+	return clntSock;
 }
 
 
