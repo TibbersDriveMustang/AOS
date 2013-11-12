@@ -13,9 +13,9 @@ Starter::~Starter() {
 }
 
 void Starter::init(){
-	//char controllerIP[15] = "10.176.67.108";
-	char controllerIP[15] = "10.176.67.89";
-	int port = LISTEN_PORT1;
+	//char controllerIP[15] = "129.110.92.15";
+	char controllerIP[15] = "10.176.67.108";
+	int port = LISTEN_PORT;
 	registerAtController(controllerIP, port);
 	decideAlgorithm();
 }
@@ -171,7 +171,7 @@ void Starter::decideAlgorithm(){
 	if(algo == 1){
 		Algorithm1();
 	}else if(algo == 2){
-		//Algorithm2();
+		Algorithm2();
 
 	}else
 		printf("Invalid input\n");
@@ -205,10 +205,15 @@ void *TorumListen(void* queue) {
 	printf("Listener created");
 	wqueue<Packet*> m_queue=*((wqueue<Packet*>*)queue);
 	communication com;
-	com.serverListen(LISTEN_PORT3,m_queue);
+	com.serverListen(LISTEN_PORT,m_queue);
 	return NULL;
 }
 
+
+void Starter::MakeReq()
+{
+	node->requestCS();
+}
 void *TorumProcess(void* queue) {
 	printf("Process created");
 	wqueue<Packet*>*m_queue=(wqueue<Packet*>*)queue;
@@ -226,6 +231,12 @@ void *TorumProcess(void* queue) {
 		}
 		if (item->TYPE == SEND_TOKEN){
 			printf("Token Recieved from %d",item->ORIGIN);
+			//inform all you quorum members
+		}
+		if (item->TYPE == MAKE_REQUEST){
+			printf("Make Request recieved from Controller %d and packet type is %d",item->ORIGIN,item->TYPE);
+			Starter s;
+			s.MakeReq();
 		}
 
 		delete item;

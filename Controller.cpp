@@ -241,6 +241,13 @@ void Controller::Algorithm1(){
 void Controller::Algorithm2(){
 	printf("\nYou have chosen Token and Quorum Based Mutual Exclusion Algorithm: Torum\n");
 	sendTokenToNode();
+	Packet pack1;
+communication com;
+		pack1.TYPE=MAKE_REQUEST;
+		pack1.ORIGIN=45;
+		pack1.SEQ=23;
+		pack1.sender=45;
+		com.sendMessage(pack1,desIP,LISTEN_PORT);
 }
 
 void Controller::initiate(Controller *c){

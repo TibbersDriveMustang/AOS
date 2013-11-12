@@ -30,6 +30,7 @@ bool Torum::getQuorumTable(int **quorumtable,int qsize,int Nnodes){
 }
 
 bool Torum::requestCS(){
+printf("Entered Req CS");
 	sequenceNo++;
 
 	struct Packet request;

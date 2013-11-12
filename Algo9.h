@@ -6,6 +6,7 @@
 #include "MessageFormat.h"
 #include "LexiQueue.h"
 #include <pthread.h>
+#include <stdio.h>
 
  using namespace std;
 class Torum

@@ -34,6 +34,7 @@ public:
 	void decideAlgorithm();
 	void Algorithm1();
 	void Algorithm2();
+void MakeReq();
 };
 
 #endif /* STARTER_H_ */
