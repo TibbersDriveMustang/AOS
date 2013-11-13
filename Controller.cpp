@@ -120,7 +120,7 @@ void *listener(void* c) {
 	socklen_t clntLen;            /* Length of client address data structure */
 
 
-	echoServPort = LISTEN_PORT1;  /* First arg:  local port */
+	echoServPort = LISTEN_PORT;  /* First arg:  local port */
 
 	/* Create socket for incoming connections */
 	if ((servSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
@@ -247,7 +247,11 @@ communication com;
 		pack1.ORIGIN=45;
 		pack1.SEQ=23;
 		pack1.sender=45;
+	char desIP[15]="129.110.92.15";
+	
+	printf("des to ID %s",desIP);
 		com.sendMessage(pack1,desIP,LISTEN_PORT);
+
 }
 
 void Controller::initiate(Controller *c){
