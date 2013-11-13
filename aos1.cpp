@@ -21,7 +21,7 @@ void *fun(void*)
 	printf("%s",str);
 	return NULL;
 }
-/*
+
 int main() {
 	cout << "Mutual Exclusion" << endl; // prints Mutual Exclusion
 
@@ -63,6 +63,5 @@ int main() {
 		s.init();
 	return 0;
 }
-/**/
 
 
